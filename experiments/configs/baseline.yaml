@@ -1,0 +1,16 @@
+# 基线实验配置（示例）：单通道 logp + GASF
+experiment: baseline_logp_gasf
+base_model: Qwen/Qwen2.5-0.5B
+signal_channel: logp
+method: gasf
+target_len: 512
+n_channels: 1
+epochs: 20
+lr: 1e-3
+weight_decay: 1e-4
+train_batch: 32
+
+# 消融网格（evaluate.py 的 ablation() 会遍历通道 x 方法）
+ablation_grid:
+  channels: [logp, rank, rank_norm, entropy, top_prob]
+  methods: [gasf, gadf, mtf, rp]

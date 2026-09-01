@@ -1,0 +1,17 @@
+# ---- 数据与生成产物：走 rsync 同步，不进 git ----
+# 原始 json 约 90MB，signals/images/checkpoints 是可再生或可拉取的大文件
+data/raw/
+data/processed/
+data/splits/
+
+# ---- 模型权重：大文件，按需 pull-ckpt 拉回 ----
+experiments/checkpoints/
+
+# ---- 服务器连接信息：含地址账号，严禁提交 ----
+scripts/sync.config
+
+# ---- Python / macOS 杂物 ----
+__pycache__/
+*.pyc
+.DS_Store
+.ipynb_checkpoints/
