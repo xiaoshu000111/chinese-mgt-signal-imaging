@@ -1,10 +1,10 @@
 # 复制本文件为 scripts/sync.config 并填写实际信息（sync.config 已被 gitignore，不会提交）
 # 示例：
-# export SYNC_USER="root"
-# export SYNC_HOST="192.168.1.100"     # 或 AutoDL 等租用主机的地址
+# export SYNC_USER="scutnlp131"
+# export SYNC_HOST="222.201.145.248"    # 服务器地址
 # export SYNC_PORT="22"                # 非默认端口时修改
-# export SYNC_DIR="~/chinese-mgt-signal-imaging"   # 服务器上的项目路径
+# export SYNC_DIR="/data/DDing/chinese-mgt-signal-imaging"   # 服务器上的项目路径（数据盘）
 export SYNC_USER=""
 export SYNC_HOST=""
 export SYNC_PORT="22"
-export SYNC_DIR="~/chinese-mgt-signal-imaging"
+export SYNC_DIR="/data/DDing/chinese-mgt-signal-imaging"
