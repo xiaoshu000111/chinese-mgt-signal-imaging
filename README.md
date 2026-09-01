@@ -5,12 +5,12 @@
 
 ## 四步路线
 
-| 步骤 | 目标 | 核心产出 | 对应代码 |
-|------|------|----------|----------|
-| ① 信号提取 | 用中文因果 LM 得到逐 token 概率信号（多通道一维序列） | `.npz` 信号文件 | `src/signals/extract_signals.py` |
-| ② 转图 | 把一维信号编码为 GAF / MTF / 递归图 | `.png` 图像 | `src/imaging/signal_to_image.py` |
-| ③ 分类 | 用 CNN 对图像做二分类（人工 / 机器） | 模型权重、评测指标 | `src/models/cnn.py`、`src/training/train.py` |
-| ④ 评估消融 | 对比不同信号通道、不同转图方法的贡献 | 消融表、混淆矩阵 | `src/evaluation/evaluate.py` |
+| 步骤     | 目标                               | 核心产出        | 对应代码                                        |
+| ------ | -------------------------------- | ----------- | ------------------------------------------- |
+| ① 信号提取 | 用中文因果 LM 得到逐 token 概率信号（多通道一维序列） | `.npz` 信号文件 | `src/signals/extract_signals.py`            |
+| ② 转图   | 把一维信号编码为 GAF / MTF / 递归图         | `.png` 图像   | `src/imaging/signal_to_image.py`            |
+| ③ 分类   | 用 CNN 对图像做二分类（人工 / 机器）           | 模型权重、评测指标   | `src/models/cnn.py`、`src/training/train.py` |
+| ④ 评估消融 | 对比不同信号通道、不同转图方法的贡献               | 消融表、混淆矩阵    | `src/evaluation/evaluate.py`                |
 
 ## 目录结构
 
@@ -49,7 +49,7 @@ chinese-mgt-signal-imaging/
 
 ## 快速开始
 
-实验怎么排、每天做什么、结果记在哪：先读 [docs/05_实验计划.md](docs/05_实验计划.md)（按天路线图）与 [docs/06_实验日志.md](docs/06_实验日志.md)（结果记录）。
+实验怎么排、每天做什么、结果记在哪：先读 [docs/05\_实验计划.md](docs/05_实验计划.md)（按天路线图）与 [docs/06\_实验日志.md](docs/06_实验日志.md)（结果记录）。
 
 ```bash
 # 1. 安装依赖
@@ -69,12 +69,12 @@ python run.py eval       # ④ 评估 + 消融
 
 ## 数据字段说明
 
-| 文件 | 字段 | 说明 |
-|------|------|------|
-| `train.json` | `text / label / model / source` | `label` 0=人工 1=机器；`model` 记录机器来源（如 gpt4o）或 human |
-| `dev.json` | `text / label` | 验证集 |
-| `test.json` | `text / id` | 盲测集（无标签；本课题不提交预测，不进管线） |
-| `test_with_label.json` | `text / label / id` | 带标签测试集，用于本地评测 |
+| 文件                     | 字段                              | 说明                                               |
+| ---------------------- | ------------------------------- | ------------------------------------------------ |
+| `train.json`           | `text / label / model / source` | `label` 0=人工 1=机器；`model` 记录机器来源（如 gpt4o）或 human |
+| `dev.json`             | `text / label`                  | 验证集                                              |
+| `test.json`            | `text / id`                     | 盲测集（无标签；本课题不提交预测，不进管线）                           |
+| `test_with_label.json` | `text / label / id`             | 带标签测试集，用于本地评测                                    |
 
 ## 本地-服务器工作流
 
@@ -96,7 +96,11 @@ git add logs experiments && git commit -m "D4: baseline 结果"   # 本地入库
 
 ## 关键实现要点（详见 docs/）
 
-- **信号通道**：默认提取 5 条通道 `logp / rank / rank_norm / entropy / top_prob`，每条长度 = token 数 T。
-- **转图方法**：GASF、GADF、MarkovTransitionField、RecurrencePlot 四种，可单通道也可三通道拼 RGB，供消融。
-- **长度处理**：训练期统一截断/补齐到固定 T（推荐 512），补长用边缘值反射避免引入人为零纹理；长文本用滑窗 + 预测聚合。
-- **可复现**：全链路固定随机种子、固定 tokenizer、信号落在磁盘缓存，训练时只读缓存。
+* **信号通道**：默认提取 5 条通道 `logp / rank / rank_norm / entropy / top_prob`，每条长度 = token 数 T。
+
+* **转图方法**：GASF、GADF、MarkovTransitionField、RecurrencePlot 四种，可单通道也可三通道拼 RGB，供消融。
+
+* **长度处理**：训练期统一截断/补齐到固定 T（推荐 512），补长用边缘值反射避免引入人为零纹理；长文本用滑窗 + 预测聚合。
+
+* **可复现**：全链路固定随机种子、固定 tokenizer、信号落在磁盘缓存，训练时只读缓存。
+

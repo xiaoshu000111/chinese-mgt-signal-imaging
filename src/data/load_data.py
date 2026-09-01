@@ -2,6 +2,8 @@
 
 把原始 json 读成统一结构，并导出 CSV 清单供训练/评估使用。
 """
+from __future__ import annotations
+
 import json
 from pathlib import Path
 

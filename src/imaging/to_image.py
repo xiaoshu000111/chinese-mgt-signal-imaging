@@ -3,6 +3,8 @@
 缩放映射在 train 上用分位数拟合并落盘 JSON，dev/test 复用同一份映射（docs/01 §2），
 避免逐样本 min-max 把「人机整体水平差异」这一判别信息洗掉。
 """
+from __future__ import annotations
+
 import json
 from pathlib import Path
 

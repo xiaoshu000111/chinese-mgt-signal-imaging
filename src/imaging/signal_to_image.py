@@ -2,6 +2,8 @@
 
 纯 numpy 实现，不依赖 pyts，便于看懂每一步、方便答辩讲原理。
 """
+from __future__ import annotations
+
 import numpy as np
 
 

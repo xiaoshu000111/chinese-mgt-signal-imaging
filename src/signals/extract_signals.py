@@ -3,6 +3,8 @@
 一次前向取 logits -> log-softmax 分布，向量化算 5 条通道，
 落盘 .npz（含信号矩阵 + 缩放元信息），供转图阶段读取。
 """
+from __future__ import annotations
+
 from pathlib import Path
 
 import numpy as np
