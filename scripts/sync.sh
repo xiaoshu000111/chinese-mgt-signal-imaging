@@ -34,7 +34,8 @@ case "${1:-}" in
     echo "[push] 代码已同步 -> $USER_HOST:$REMOTE_DIR"
     ;;
   push-data)
-    rsync -avz --progress -e "$RSYNC_SSH" data/raw/ "$USER_HOST:$REMOTE_DIR/data/raw/"
+    # 注：Mac 自带 openrsync 对大文件带 --progress 会崩溃，故不用 --progress
+    rsync -avz -e "$RSYNC_SSH" data/raw/ "$USER_HOST:$REMOTE_DIR/data/raw/"
     echo "[push-data] 原始数据已同步（约 90MB，仅首次需要）"
     ;;
   pull)
@@ -44,12 +45,12 @@ case "${1:-}" in
     echo "[pull] 日志与实验结果已拉回；请 git add logs experiments 并提交"
     ;;
   pull-signals)
-    rsync -avz --progress -e "$RSYNC_SSH" \
+    rsync -avz -e "$RSYNC_SSH" \
       "$USER_HOST:$REMOTE_DIR/data/processed/signals/" data/processed/signals/
     echo "[pull-signals] 信号缓存已备份到本地（D3 备份要求）"
     ;;
   pull-ckpt)
-    rsync -avz --progress -e "$RSYNC_SSH" \
+    rsync -avz -e "$RSYNC_SSH" \
       "$USER_HOST:$REMOTE_DIR/experiments/checkpoints/" experiments/checkpoints/
     echo "[pull-ckpt] 模型权重已拉回"
     ;;
