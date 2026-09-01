@@ -76,6 +76,24 @@ python run.py eval       # ④ 评估 + 消融
 | `test.json` | `text / id` | 盲测集（无标签；本课题不提交预测，不进管线） |
 | `test_with_label.json` | `text / label / id` | 带标签测试集，用于本地评测 |
 
+## 本地-服务器工作流
+
+git **只在本地**做版本管理；云服务器只跑实验，用 rsync 双向同步：
+
+```bash
+# 首次：配置服务器信息（sync.config 已 gitignore，不会提交）
+cp scripts/sync.config.example scripts/sync.config   # 填写 USER/HOST/PORT/DIR
+./scripts/sync.sh push-data    # 上传原始数据（约 90MB，仅一次）
+
+# 日常循环：
+./scripts/sync.sh push        # 本地改代码 -> 服务器（服务器上直接跑 python run.py ...）
+./scripts/sync.sh pull         # 服务器跑完 -> 拉回 logs/ 与实验结果（不含权重）
+git add logs experiments && git commit -m "D4: baseline 结果"   # 本地入库存档
+./scripts/sync.sh pull-signals # D3 信号提取完成后备份到本地（约 1GB）
+```
+
+服务器日志头部的 `git 版本` 字段显示「非 git 仓库」属正常——版本追溯以本地仓库的 commit 记录为准（pull 回的日志与本地 commit 一一对应）。
+
 ## 关键实现要点（详见 docs/）
 
 - **信号通道**：默认提取 5 条通道 `logp / rank / rank_norm / entropy / top_prob`，每条长度 = token 数 T。
