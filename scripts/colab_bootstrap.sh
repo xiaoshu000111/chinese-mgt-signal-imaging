@@ -12,6 +12,7 @@ DRIVE_ROOT="/content/drive/MyDrive/chinese-mgt-signal-imaging"
 RUN_ID="D0_smoke"
 ENV_FILE="scripts/colab.env"
 INSTALL=1
+RAW_DIR=""
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -32,9 +33,31 @@ case "$RUN_ID" in
   *[!A-Za-z0-9._-]*) echo "run-id contains unsafe characters: $RUN_ID" >&2; exit 2 ;;
 esac
 
+required_raw_files=(train.json dev.json test.json test_with_label.json)
+has_required_raw_files() {
+  local candidate="$1"
+  local filename
+  [ -d "$candidate" ] || return 1
+  for filename in "${required_raw_files[@]}"; do
+    [ -f "$candidate/$filename" ] || return 1
+  done
+}
+
+# Accept both the canonical Drive layout and the full-repository layout that
+# keeps the datasets under data/raw/. Do not let an empty raw/ directory,
+# created by an earlier bootstrap, hide a valid data/raw/ directory.
+if has_required_raw_files "$DRIVE_ROOT/raw"; then
+  RAW_DIR="$DRIVE_ROOT/raw"
+elif has_required_raw_files "$DRIVE_ROOT/data/raw"; then
+  RAW_DIR="$DRIVE_ROOT/data/raw"
+else
+  RAW_DIR="$DRIVE_ROOT/raw"
+  echo "[colab] warning: required JSON files were not found in $DRIVE_ROOT/raw or $DRIVE_ROOT/data/raw" >&2
+fi
+
 RUN_ROOT="$DRIVE_ROOT/runs/$RUN_ID"
 mkdir -p \
-  "$DRIVE_ROOT/raw" \
+  "$RAW_DIR" \
   "$DRIVE_ROOT/hf_cache" \
   "$RUN_ROOT/processed" \
   "$RUN_ROOT/splits" \
@@ -46,7 +69,7 @@ mkdir -p \
 # This file is intentionally untracked and contains only the current run paths.
 # It is sourced by colab_run.sh; do not hand-edit source code paths into it.
 cat > "$ENV_FILE" <<EOF
-export MGT_DATA_RAW='$DRIVE_ROOT/raw'
+export MGT_DATA_RAW='$RAW_DIR'
 export MGT_PROCESSED_ROOT='$RUN_ROOT/processed'
 export MGT_SPLITS_ROOT='$RUN_ROOT/splits'
 export MGT_OUTPUT_ROOT='$RUN_ROOT/outputs'
@@ -67,5 +90,5 @@ echo "[colab] checkout: $(pwd)"
 echo "[colab] drive root: $DRIVE_ROOT"
 echo "[colab] run root: $RUN_ROOT"
 echo "[colab] env file: $ENV_FILE"
-echo "[colab] raw data must be placed in: $DRIVE_ROOT/raw"
+echo "[colab] raw data: $RAW_DIR"
 echo "[colab] next: source $ENV_FILE && python run.py preflight"

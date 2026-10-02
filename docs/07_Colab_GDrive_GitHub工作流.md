@@ -11,7 +11,7 @@
 
 ## 一、Google Drive 目录约定
 
-在 Drive 中建立一个目录：
+在 Drive 中建立一个目录。规范布局如下：
 
 ```text
 MyDrive/chinese-mgt-signal-imaging/
@@ -27,6 +27,11 @@ MyDrive/chinese-mgt-signal-imaging/
     │   └── logs/                # 本次运行原始日志
     └── D3_logp_gasf_qwen025b_T512/
 ```
+
+如果上传的是完整项目文件夹，脚本也会自动识别
+`chinese-mgt-signal-imaging/data/raw/`，因此不需要重新上传数据。规范布局中的
+`raw/` 优先级更高；四个文件必须命名为 `train.json`、`dev.json`、`test.json` 和
+`test_with_label.json`。
 
 每个 `RUN_ID` 是一个不可混用的实验空间。基础模型、目标长度、信号通道或转图方法发生变化时，必须新建 `RUN_ID`，不能复用旧的 `processed/`。
 
@@ -54,7 +59,7 @@ drive.mount('/content/drive')
 3. 安装 `requirements-colab.txt`，不会覆盖 Colab 自带的 CUDA 版 PyTorch；
 4. 把信号、图片、权重、日志等路径指向当前 run。
 
-把四个 JSON 文件放到 Drive 的 `raw/` 目录后运行：
+把四个 JSON 文件放到 Drive 的 `raw/` 或 `data/raw/` 目录后运行：
 
 ```bash
 !bash scripts/colab_run.sh preflight
