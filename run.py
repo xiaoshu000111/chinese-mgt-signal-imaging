@@ -4,6 +4,7 @@
   python run.py ks        信号质量自查（各通道类间 KS + logp 曲线图，D2 决策门依据）
   python run.py train     训练
   python run.py eval      评估（含可选 ablation）
+  python run.py preflight 环境、数据、GPU 与产物路径检查
 
 每次运行自动落盘日志：logs/YYYYMMDD_HHMMSS_<实验名>.log，
 头部写入来源（完整命令行 + git 版本 + 关键配置）与目的（--purpose）。
@@ -26,7 +27,7 @@ DEFAULTS = {
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", nargs="?", default="help",
-                        choices=["extract", "to_image", "ks", "train", "eval", "help"])
+        choices=["extract", "to_image", "ks", "train", "eval", "preflight", "help"])
     parser.add_argument("extra", nargs="*", help="额外位置参数，如 eval ablation")
     parser.add_argument("--name", help="实验名（日志文件名一部分；默认 按命令+当前配置自动生成）")
     parser.add_argument("--purpose", default="", help="本段实验的目的，写入日志头部")
@@ -36,6 +37,11 @@ def main():
 
     if args.command == "help":
         print(__doc__)
+        return
+
+    if args.command == "preflight":
+        from scripts.preflight import main as preflight_main
+        preflight_main()
         return
 
     import config
@@ -83,6 +89,15 @@ def main():
             "ckpt": str(config.CKPT_DIR / f"{channel}_{method}.pt"),
             "ablation": "ablation" in args.extra,
         }
+
+    # 每种命令都记录这几个跨阶段必须一致的字段，便于在 Drive 上审计 run。
+    meta.update({
+        "run_id": config.RUN_ID,
+        "base_model": config.BASE_MODEL_NAME,
+        "target_len": config.TARGET_LEN,
+        "seed": config.SEED,
+        "device": config.DEVICE,
+    })
 
     start_experiment_log(name, purpose, meta)
 

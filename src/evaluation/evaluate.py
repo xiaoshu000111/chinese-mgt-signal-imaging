@@ -77,7 +77,7 @@ def ablation():
     table = pd.DataFrame(rows)
     print("\n===== 消融表 (acc/f1/auc/f1_tuned@dev阈值) =====")
     print(table.round(4).to_string(index=False))
-    out = config.PROJECT_ROOT / "experiments" / "ablation.csv"
+    out = config.OUTPUT_ROOT / "ablation.csv"
     table.to_csv(out, index=False)
     print(f"已保存 -> {out}")
 

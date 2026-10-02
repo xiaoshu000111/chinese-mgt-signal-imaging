@@ -9,6 +9,7 @@ experiments/checkpoints/
 
 # ---- 服务器连接信息：含地址账号，严禁提交 ----
 scripts/sync.config
+scripts/colab.env
 
 # ---- Python / macOS 杂物 ----
 __pycache__/

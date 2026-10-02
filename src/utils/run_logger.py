@@ -62,7 +62,7 @@ def start_experiment_log(name, purpose, meta=None):
     """
     import config
 
-    logs_dir = config.PROJECT_ROOT / "logs"
+    logs_dir = config.LOG_DIR
     logs_dir.mkdir(parents=True, exist_ok=True)
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     safe_name = "".join(c if (c.isalnum() or c in "-_") else "_" for c in name)
@@ -74,6 +74,9 @@ def start_experiment_log(name, purpose, meta=None):
         f"开始时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
         f"来源: {' '.join(sys.argv)}",
         f"代码版本: {_git_info()}",
+        f"run_id: {config.RUN_ID}",
+        f"数据目录: {config.DATA_RAW}",
+        f"产物目录: {config.DATA_PROCESSED}",
         f"目的: {purpose}",
     ]
     if meta:

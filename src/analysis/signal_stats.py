@@ -52,7 +52,7 @@ def run(split: str = "train", max_n: int = 3000):
         rows.append({"channel": c, "ks": ks_2samp(np.concatenate(h), np.concatenate(m)),
                      "n_human": len(h), "n_machine": len(m)})
 
-    out_dir = config.PROJECT_ROOT / "experiments" / "analysis"
+    out_dir = config.ANALYSIS_DIR
     out_dir.mkdir(parents=True, exist_ok=True)
     df = pd.DataFrame(rows).sort_values("ks", ascending=False)
     csv_path = out_dir / f"ks_{split}.csv"

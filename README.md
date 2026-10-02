@@ -51,6 +51,8 @@ chinese-mgt-signal-imaging/
 
 实验怎么排、每天做什么、结果记在哪：先读 [docs/05\_实验计划.md](docs/05_实验计划.md)（按天路线图）与 [docs/06\_实验日志.md](docs/06_实验日志.md)（结果记录）。
 
+GPU 实验采用 Colab + Google Drive + GitHub + 本地协作时，先读 [docs/07_Colab_GDrive_GitHub工作流.md](docs/07_Colab_GDrive_GitHub工作流.md)。
+
 ```bash
 # 1. 安装依赖
 pip install -r requirements.txt --break-system-packages
@@ -76,23 +78,11 @@ python run.py eval       # ④ 评估 + 消融
 | `test.json`            | `text / id`                     | 盲测集（无标签；本课题不提交预测，不进管线）                           |
 | `test_with_label.json` | `text / label / id`             | 带标签测试集，用于本地评测                                    |
 
-## 本地-服务器工作流
+## 本地-Colab-Google Drive 工作流
 
-git **只在本地**做版本管理；云服务器只跑实验，用 rsync 双向同步：
+当前不把实验室服务器作为前提。GitHub 保存代码版本，Colab 从 GitHub 获取代码，Google Drive 保存大文件和每个 run 的产物。本地只把小型结果和实验日志摘要取回后提交 Git。
 
-```bash
-# 首次：配置服务器信息（sync.config 已 gitignore，不会提交）
-cp scripts/sync.config.example scripts/sync.config   # 填写 USER/HOST/PORT/DIR
-./scripts/sync.sh push-data    # 上传原始数据（约 90MB，仅一次）
-
-# 日常循环：
-./scripts/sync.sh push        # 本地改代码 -> 服务器（服务器上直接跑 python run.py ...）
-./scripts/sync.sh pull         # 服务器跑完 -> 拉回 logs/ 与实验结果（不含权重）
-git add logs experiments && git commit -m "D4: baseline 结果"   # 本地入库存档
-./scripts/sync.sh pull-signals # D3 信号提取完成后备份到本地（约 1GB）
-```
-
-服务器日志头部的 `git 版本` 字段显示「非 git 仓库」属正常——版本追溯以本地仓库的 commit 记录为准（pull 回的日志与本地 commit 一一对应）。
+完整步骤见 [docs/07_Colab_GDrive_GitHub工作流.md](docs/07_Colab_GDrive_GitHub工作流.md)。
 
 ## 关键实现要点（详见 docs/）
 
@@ -103,4 +93,3 @@ git add logs experiments && git commit -m "D4: baseline 结果"   # 本地入库
 * **长度处理**：训练期统一截断/补齐到固定 T（推荐 512），补长用边缘值反射避免引入人为零纹理；长文本用滑窗 + 预测聚合。
 
 * **可复现**：全链路固定随机种子、固定 tokenizer、信号落在磁盘缓存，训练时只读缓存。
-

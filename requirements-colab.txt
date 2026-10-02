@@ -1,0 +1,11 @@
+# Colab runtime already provides torch/torchvision with a CUDA build.
+# Do not reinstall them from this file; doing so can replace the working CUDA runtime.
+transformers>=4.40,<5
+numpy>=1.24,<3
+pandas>=2.0
+pillow>=10.0
+scikit-learn>=1.3
+tqdm>=4.66
+pyyaml>=6.0
+matplotlib>=3.7
+pytest>=7.0
